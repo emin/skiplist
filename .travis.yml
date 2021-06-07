@@ -3,9 +3,6 @@ language: go
 go:
   - '1.16'
 
-env:
-  - CODECOV_TOKEN="f679d816-f33f-45a4-8275-ff39c05218d8"
-
 before_install:
   - go get -t -v ./...
 

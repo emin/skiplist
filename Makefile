@@ -7,6 +7,8 @@ test:
 cover:
 	go test -race -coverprofile=coverage.txt -covermode=atomic
 
+bench:
+	go test -bench=.
 
-show-cover: cover
-	rm -f coverage.txt
+show-cover:
+	go test -cover

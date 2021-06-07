@@ -79,10 +79,6 @@ func (list *SkipList) Get(key interface{}) interface{} {
 		}
 	}
 
-	if cur != nil && cur.Key != nil && list.comparator(cur.Key, key) == 0 {
-		return cur.Value
-	}
-
 	return nil
 }
 
@@ -170,11 +166,7 @@ func (list *SkipList) Set(key, value interface{}) {
 				nextNode = lNode.Next[j]
 			}
 
-			if j >= len(newNode.Next) {
-				newNode.Next = append(newNode.Next, nextNode)
-			} else {
-				newNode.Next[j] = nextNode
-			}
+			newNode.Next = append(newNode.Next, nextNode)
 
 			if j >= len(lNode.Next) {
 				lNode.Next = append(lNode.Next, newNode)

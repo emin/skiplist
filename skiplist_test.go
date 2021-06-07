@@ -78,18 +78,44 @@ func TestSet(t *testing.T) {
 	nV = l.Get(k)
 	assertEq(t, nil, nV)
 
+	l = New(IntComparator)
+	for i := 0; i < 100; i++ {
+		l.Set(i*2+1, 1)
+		l.Set(i*2, 0)
+		if i%2 == 0 {
+			assertEq(t, 0, l.Get(i))
+		} else {
+			assertEq(t, 1, l.Get(i))
+		}
+	}
+
 }
 
 func TestGet(t *testing.T) {
-	l := New(StringComparator)
+	l := New(IntComparator)
 	for i := 0; i < 10099; i++ {
-		k := fmt.Sprintf("test-key-%v", i)
+		k := i * 10
 		v := fmt.Sprintf("test-val-%v", i*2)
 		l.Set(k, v)
 		nV := l.Get(k)
 		assertNotEq(t, nil, nV)
 		assertEq(t, v, nV)
 	}
+
+	for i := 0; i < 10099; i++ {
+		k := i * 10
+		l.Delete(k)
+	}
+
+	for i := 0; i < 10099; i++ {
+		k := i * 5
+		v := fmt.Sprintf("test-val-%v", i*2)
+		l.Set(k, v)
+		nV := l.Get(k)
+		assertNotEq(t, nil, nV)
+		assertEq(t, v, nV)
+	}
+	t.Logf("Count -> %v", l.count)
 
 }
 
@@ -176,7 +202,7 @@ func BenchmarkGetByteSlice(b *testing.B) {
 
 func BenchmarkGetString(b *testing.B) {
 	l := New(StringComparator)
-	for i := 0; i < 10000000; i++ {
+	for i := 0; i < 1000000; i++ {
 		k := fmt.Sprintf("%v", i)
 		v := fmt.Sprintf("val -> %v", i)
 		l.Set(k, []byte(v))
@@ -191,7 +217,7 @@ func BenchmarkGetString(b *testing.B) {
 
 func BenchmarkGetInt(b *testing.B) {
 	l := New(IntComparator)
-	for i := 0; i < 10000000; i++ {
+	for i := 0; i < 1000000; i++ {
 		v := fmt.Sprintf("val -> %v", i)
 		l.Set(i, []byte(v))
 	}
@@ -204,7 +230,7 @@ func BenchmarkGetInt(b *testing.B) {
 
 func BenchmarkGetHash(b *testing.B) {
 	l := make(map[string]string)
-	for i := 0; i < 10000000; i++ {
+	for i := 0; i < 1000000; i++ {
 		k := fmt.Sprintf("%v", i)
 		v := fmt.Sprintf("val -> %v", i)
 		l[k] = v
