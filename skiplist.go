@@ -7,7 +7,6 @@ package skiplist
 
 import (
 	"bytes"
-	"fmt"
 	"math/rand"
 	"strings"
 )
@@ -190,21 +189,6 @@ func (list *SkipList) Set(key, value interface{}) {
 // Returns how many keys currently in SkipList
 func (list *SkipList) KeyCount() int64 {
 	return list.count
-}
-
-// This is for debug purposes, don't use it with big sizes
-func (list *SkipList) debugPrint() {
-	fmt.Printf("============level = %v================\n", list.highestLevel)
-
-	for h := 0; h <= list.highestLevel; h++ {
-		cur := list.sentinel.Next[h]
-		for cur != nil {
-			fmt.Printf("%v ", cur.Key)
-			cur = cur.Next[h]
-		}
-		fmt.Println("")
-	}
-	//fmt.Println("=============================")
 }
 
 // Returns an iterator for SkipList
