@@ -54,11 +54,6 @@ func New(comparator func(interface{}, interface{}) int) *SkipList {
 	return l
 }
 
-// Returns highest level for SkipList
-func (list *SkipList) GetMaxLevel() int {
-	return list.highestLevel
-}
-
 func flipCoin() bool {
 	return rand.Intn(2) == 1
 }
@@ -198,7 +193,7 @@ func (list *SkipList) KeyCount() int64 {
 }
 
 // This is for debug purposes, don't use it with big sizes
-func (list *SkipList) DebugPrint() {
+func (list *SkipList) debugPrint() {
 	fmt.Printf("============level = %v================\n", list.highestLevel)
 
 	for h := 0; h <= list.highestLevel; h++ {

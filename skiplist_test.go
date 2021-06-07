@@ -82,45 +82,50 @@ func TestSet(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	l := New(StringComparator)
-	k := "test-key-1"
-	v := "test-val-1"
-	l.Set(k, v)
+	for i := 0; i < 10099; i++ {
+		k := fmt.Sprintf("test-key-%v", i)
+		v := fmt.Sprintf("test-val-%v", i*2)
+		l.Set(k, v)
+		nV := l.Get(k)
+		assertNotEq(t, nil, nV)
+		assertEq(t, v, nV)
+	}
 
-	nV := l.Get(k)
-	assertNotEq(t, nil, nV)
-	assertEq(t, v, nV)
 }
 
 func TestDelete(t *testing.T) {
-	l := New(StringComparator)
+	l := New(Int64Comparator)
 
 	for i := 0; i < 100; i++ {
-		l.Set("1", []byte("1"))
-		r := l.Delete("1")
+		var k int64 = 13
+		l.Set(k, []byte("1"))
+		r := l.Delete(k)
 		assertEq(t, true, r)
-		r = l.Delete("1")
+		r = l.Delete(k)
 		assertEq(t, false, r)
-		assertEq(t, nil, l.Get("1"))
-		l.Set("1", []byte("1"))
-		assertEq(t, []byte("1"), l.Get("1"))
+		assertEq(t, nil, l.Get(k))
+		l.Set(k, []byte("1"))
+		assertEq(t, []byte("1"), l.Get(k))
 	}
 
-	for i := 0; i < 1000; i++ {
-		k := fmt.Sprintf("test-key-%v", i)
+	l = New(ByteSliceComparator)
+
+	for i := 0; i < 10000; i++ {
+		k := []byte(fmt.Sprintf("test-key-%v", i))
 		v := []byte(fmt.Sprintf("test-val-%v", i))
 		l.Set(k, v)
 	}
 
-	for i := 0; i < 500; i++ {
-		k := fmt.Sprintf("test-key-%v", i)
+	for i := 0; i < 5000; i++ {
+		k := []byte(fmt.Sprintf("test-key-%v", i))
 		removed := l.Delete(k)
 		assertEq(t, true, removed)
 		nV := l.Get(k)
 		assertEq(t, nil, nV)
 	}
 
-	for i := 500; i < 1000; i++ {
-		k := fmt.Sprintf("test-key-%v", i)
+	for i := 5000; i < 10000; i++ {
+		k := []byte(fmt.Sprintf("test-key-%v", i))
 		v := []byte(fmt.Sprintf("test-val-%v", i))
 		nV := l.Get(k)
 		assertEq(t, v, nV)
@@ -137,7 +142,7 @@ func TestSkipList_KeyCount(t *testing.T) {
 	assertEq(t, int64(0), l.KeyCount())
 	l.Delete(4)
 	assertEq(t, int64(0), l.KeyCount())
-	count := 2021
+	count := 20210
 	for i := 0; i < count; i++ {
 		l.Set(i*10, []byte("test"))
 	}
@@ -215,4 +220,9 @@ func BenchmarkGetHash(b *testing.B) {
 	}
 }
 func void(_ string) {
+}
+
+func TestSkipList_Iterator(t *testing.T) {
+	l := New(ByteSliceComparator)
+	assertNotEq(t, nil, l.Iterator())
 }

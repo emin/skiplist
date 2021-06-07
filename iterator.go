@@ -32,8 +32,6 @@ func (i *iteratorImpl) Next() bool {
 	if i.cur != nil {
 		if i.cur.Next != nil {
 			i.cur = i.cur.Next[0]
-		} else {
-			i.cur = nil
 		}
 	}
 
