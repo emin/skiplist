@@ -47,7 +47,7 @@ func main(){
     // use int keys only
     list := skiplist.New(skiplist.IntComparator)
     list.Set(1, "data-1")
-	list.Set(3, "data-3")
+    list.Set(3, "data-3")
     list.Set(2, "data-2")
     
     it := list.Iterator()
