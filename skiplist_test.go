@@ -115,7 +115,6 @@ func TestGet(t *testing.T) {
 		assertNotEq(t, nil, nV)
 		assertEq(t, v, nV)
 	}
-	t.Logf("Count -> %v", l.count)
 
 }
 
@@ -142,7 +141,7 @@ func TestDelete(t *testing.T) {
 		l.Set(k, v)
 	}
 
-	for i := 0; i < 5000; i++ {
+	for i := 5000; i > 2000; i-- {
 		k := []byte(fmt.Sprintf("test-key-%v", i))
 		removed := l.Delete(k)
 		assertEq(t, true, removed)
@@ -150,7 +149,15 @@ func TestDelete(t *testing.T) {
 		assertEq(t, nil, nV)
 	}
 
-	for i := 5000; i < 10000; i++ {
+	for i := 9999; i > 8000; i-- {
+		k := []byte(fmt.Sprintf("test-key-%v", i))
+		removed := l.Delete(k)
+		assertEq(t, true, removed)
+		nV := l.Get(k)
+		assertEq(t, nil, nV)
+	}
+
+	for i := 5001; i < 8000; i++ {
 		k := []byte(fmt.Sprintf("test-key-%v", i))
 		v := []byte(fmt.Sprintf("test-val-%v", i))
 		nV := l.Get(k)

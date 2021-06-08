@@ -94,11 +94,7 @@ func (list *SkipList) Delete(key interface{}) bool {
 				if cmp := list.comparator(cur.Next[h].Key, key); cmp >= 0 {
 					if cmp == 0 {
 						removed = true
-						if len(cur.Next[h].Next) > h {
-							cur.Next[h] = cur.Next[h].Next[h]
-						} else {
-							cur.Next[h] = nil
-						}
+						cur.Next[h] = cur.Next[h].Next[h]
 						if cur == list.sentinel && cur.Next[h] == nil && h > 0 {
 							list.highestLevel--
 						}
@@ -167,13 +163,7 @@ func (list *SkipList) Set(key, value interface{}) {
 			}
 
 			newNode.Next = append(newNode.Next, nextNode)
-
-			if j >= len(lNode.Next) {
-				lNode.Next = append(lNode.Next, newNode)
-			} else {
-				lNode.Next[j] = newNode
-			}
-
+			lNode.Next[j] = newNode
 		}
 	}
 }
