@@ -44,7 +44,7 @@ import (
 )
 
 func main(){
-    // use string keys only
+    // use int keys only
     list := skiplist.New(skiplist.IntComparator)
     list.Set(1, "data-1")
 	list.Set(3, "data-3")
