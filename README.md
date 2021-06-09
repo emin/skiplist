@@ -72,7 +72,7 @@ Iterator() Iterator
 
 ```
 
-For more, look at [godoc](https://pkg.go.dev/github.com/emin/skiplist)
+For more, look at [![Go Reference](https://pkg.go.dev/badge/github.com/emin/skiplist.svg)](https://pkg.go.dev/github.com/emin/skiplist)
 
 #### Benchmarks
 
