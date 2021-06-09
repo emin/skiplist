@@ -1,4 +1,4 @@
-## SkipList Implementation in Go
+## Skip List Implementation in Go
 
 [![Build Status](https://travis-ci.com/emin/skiplist.svg?branch=master)](https://travis-ci.com/emin/skiplist)
 [![codecov](https://codecov.io/gh/emin/skiplist/branch/master/graph/badge.svg?token=G3GTH9KRRN)](https://codecov.io/gh/emin/skiplist)
@@ -93,3 +93,5 @@ BenchmarkGetHash-8        	 7065658	       169.3 ns/op	      15 B/op	       1 al
 At the last row `BenchmarkGetHash-8` is `map[string]string`, I compared the numbers with hashtable performance while developing the code.
 Decided to left it as something to compare for you. Don't forget hashtable has O(1) access, skip list is O(log n).
 
+#### LICENSE
+MIT License
