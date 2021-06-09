@@ -63,7 +63,7 @@ For more examples, look at `examples/` folder in the project.
 #### Skiplist Interface
 
 ```go
-
+New(comparator func(interface{}, interface{}) int) *SkipList
 Get(key interface{}) interface{}
 Delete(key interface{}) bool
 Set(key, value interface{})
@@ -93,5 +93,6 @@ BenchmarkGetHash-8        	 7065658	       169.3 ns/op	      15 B/op	       1 al
 At the last row `BenchmarkGetHash-8` is `map[string]string`, I compared the numbers with hashtable performance while developing the code.
 Decided to left it as something to compare for you. Don't forget hashtable has O(1) access, skip list is O(log n).
 
-#### LICENSE
+#### License
+
 MIT License
