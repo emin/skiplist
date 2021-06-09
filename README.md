@@ -59,3 +59,37 @@ func main(){
 
 For more examples, look at `examples/` folder in the project.
 
+
+#### Skiplist Interface
+
+```go
+
+Get(key interface{}) interface{}
+Delete(key interface{}) bool
+Set(key, value interface{})
+KeyCount() int64
+Iterator() Iterator
+
+```
+
+For more, look at [godoc](https://pkg.go.dev/github.com/emin/skiplist)
+
+#### Benchmarks
+
+Run on M1 Macbook Air 8GB model.
+```
+go test -bench=.
+goos: darwin
+goarch: arm64
+pkg: github.com/emin/skiplist
+BenchmarkSetByteSlice-8   	 1415803	       866.7 ns/op	     659 B/op	      13 allocs/op
+BenchmarkSetString-8      	 1340932	       889.9 ns/op	     641 B/op	      12 allocs/op
+BenchmarkSetInt-8         	 2067220	       585.3 ns/op	     600 B/op	      10 allocs/op
+BenchmarkGetByteSlice-8   	 1662294	       712.3 ns/op	      47 B/op	       3 allocs/op
+BenchmarkGetString-8      	 3088497	       377.5 ns/op	      31 B/op	       2 allocs/op
+BenchmarkGetInt-8         	11629693	       170.6 ns/op	       7 B/op	       0 allocs/op
+BenchmarkGetHash-8        	 7065658	       169.3 ns/op	      15 B/op	       1 allocs/op
+```
+At the last row `BenchmarkGetHash-8` is `map[string]string`, I compared the numbers with hashtable performance while developing the code.
+Decided to left it as something to compare for you. Don't forget hashtable has O(1) access, skip list is O(log n).
+
