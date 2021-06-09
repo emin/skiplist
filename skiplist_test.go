@@ -182,23 +182,16 @@ func TestSkipList_KeyCount(t *testing.T) {
 	assertEq(t, int64(count), l.KeyCount())
 }
 
-func BenchmarkSetByteSlice(b *testing.B) {
-	l := New(ByteSliceComparator)
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		v := []byte(fmt.Sprintf("%v", n))
-		l.Set(v, v)
-	}
-}
-
 func BenchmarkSetString(b *testing.B) {
 	l := New(StringComparator)
+	keys := make([]string, b.N)
+	for n := 0; n < b.N; n++ {
+		keys[n] = fmt.Sprintf("%v", n)
+	}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v := fmt.Sprintf("%v", n)
-		l.Set(v, v)
+		l.Set(keys[n], 1)
 	}
 }
 
@@ -211,21 +204,6 @@ func BenchmarkSetInt(b *testing.B) {
 	}
 }
 
-func BenchmarkGetByteSlice(b *testing.B) {
-	l := New(ByteSliceComparator)
-	for i := 0; i < 10000000; i++ {
-		k := fmt.Sprintf("%v", i)
-		v := fmt.Sprintf("val -> %v", i)
-		l.Set([]byte(k), []byte(v))
-	}
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		v := []byte(fmt.Sprintf("%v", n))
-		l.Get(v)
-	}
-}
-
 func BenchmarkGetString(b *testing.B) {
 	l := New(StringComparator)
 	for i := 0; i < 1000_000; i++ {
@@ -233,11 +211,14 @@ func BenchmarkGetString(b *testing.B) {
 		v := fmt.Sprintf("val -> %v", i)
 		l.Set(k, []byte(v))
 	}
+	keys := make([]string, b.N)
+	for n := 0; n < b.N; n++ {
+		keys[n] = fmt.Sprintf("%v", n)
+	}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v := fmt.Sprintf("%v", n)
-		l.Get(v)
+		l.Get(keys[n])
 	}
 }
 
@@ -247,6 +228,7 @@ func BenchmarkGetInt(b *testing.B) {
 		v := fmt.Sprintf("val -> %v", i)
 		l.Set(i, []byte(v))
 	}
+
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
@@ -263,13 +245,17 @@ func BenchmarkGetHash(b *testing.B) {
 	}
 	a := ""
 	void(a)
+	keys := make([]string, b.N)
+	for n := 0; n < b.N; n++ {
+		keys[n] = fmt.Sprintf("%v", n)
+	}
 	b.ReportAllocs()
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		v := fmt.Sprintf("%v", n)
-		a = l[v]
+		a = l[keys[n]]
 	}
+	void(a)
 }
 func void(_ string) {
 }
