@@ -82,11 +82,11 @@ go test -bench=.
 goos: darwin
 goarch: arm64
 pkg: github.com/emin/skiplist
-BenchmarkSetString-8   	 1655217	       760.4 ns/op	     605 B/op	       9 allocs/op
-BenchmarkSetInt-8      	 2185052	       590.1 ns/op	     608 B/op	      10 allocs/op
-BenchmarkGetString-8   	 3935841	       305.6 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGetInt-8      	 8904025	       160.9 ns/op	       7 B/op	       0 allocs/op
-BenchmarkGetHash-8     	20032552	        51.57 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetString-8   	 1866468	       626.2 ns/op	     582 B/op	       5 allocs/op
+BenchmarkSetInt-8      	 2842914	       438.2 ns/op	     559 B/op	       6 allocs/op
+BenchmarkGetString-8   	 4044667	       277.7 ns/op	      16 B/op	       1 allocs/op
+BenchmarkGetInt-8      	 8329945	       146.1 ns/op	       7 B/op	       0 allocs/op
+BenchmarkGetHash-8     	24889994	        48.52 ns/op	       0 B/op	       0 allocs/op
 ```
 At the last row `BenchmarkGetHash-8` is `map[string]string`, I compared the numbers with hashtable performance while developing the code.
 Decided to left it as something to compare for you. Don't forget hashtable has O(1) access, skip list is O(log n).

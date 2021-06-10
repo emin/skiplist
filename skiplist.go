@@ -122,7 +122,7 @@ func (list *SkipList) Set(key, value interface{}) {
 	h := list.highestLevel
 	cur := list.sentinel
 
-	stack := make([]*node, 0)
+	stack := make([]*node, 0, list.highestLevel)
 
 	for ; h >= 0; h-- {
 		for cur != nil {
