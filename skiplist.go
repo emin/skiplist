@@ -8,7 +8,6 @@ package skiplist
 import (
 	"bytes"
 	"math/rand"
-	"strings"
 )
 
 const maxLevel = 32
@@ -18,37 +17,23 @@ type SkipList struct {
 	highestLevel int
 	sentinel     *node
 	count        int64
-	comparator   func(interface{}, interface{}) int
+	size         int64
 }
 
 type node struct {
-	Key   interface{}
-	Value interface{}
+	Key   []byte
+	Value []byte
 	Next  []*node
 }
 
-// ready to use comparators for common types
-var ByteSliceComparator = func(a, b interface{}) int { return bytes.Compare(a.([]byte), b.([]byte)) }
-var StringComparator = func(a, b interface{}) int { return strings.Compare(a.(string), b.(string)) }
-var IntComparator = func(a, b interface{}) int { return a.(int) - b.(int) }
-var Int64Comparator = func(a, b interface{}) int { return int(a.(int64) - b.(int64)) }
-
 // Returns a new SkipList
-// Requires comparison function for the key type which will be used in skip list
-//
-// Example comparator;
-//
-//	 func(a, b interface{}) int {
-//			return bytes.Compare(a.([]byte), b.([]byte))
-// 	}
-//
-func New(comparator func(interface{}, interface{}) int) *SkipList {
+func New() *SkipList {
 	l := &SkipList{
 		highestLevel: 0,
-		comparator:   comparator,
 	}
+	root := make([]*node, maxLevel)
 	l.sentinel = &node{
-		Next: make([]*node, maxLevel),
+		Next: root,
 	}
 	return l
 }
@@ -59,14 +44,14 @@ func flipCoin() bool {
 
 // Return value for given key
 // if key does not exists, it returns nil
-func (list *SkipList) Get(key interface{}) interface{} {
+func (list *SkipList) Get(key []byte) []byte {
 	h := list.highestLevel
 	cur := list.sentinel
 
 	for ; h >= 0; h-- {
 		for cur != nil {
 			if cur.Next[h] != nil {
-				if cmp := list.comparator(cur.Next[h].Key, key); cmp >= 0 {
+				if cmp := bytes.Compare(cur.Next[h].Key, key); cmp >= 0 {
 					if cmp == 0 {
 						return cur.Next[h].Value
 					}
@@ -83,7 +68,7 @@ func (list *SkipList) Get(key interface{}) interface{} {
 }
 
 // Deletes key from SkipList
-func (list *SkipList) Delete(key interface{}) bool {
+func (list *SkipList) Delete(key []byte) bool {
 	h := list.highestLevel
 	cur := list.sentinel
 
@@ -91,7 +76,7 @@ func (list *SkipList) Delete(key interface{}) bool {
 	for ; h >= 0; h-- {
 		for cur != nil {
 			if cur.Next[h] != nil {
-				if cmp := list.comparator(cur.Next[h].Key, key); cmp >= 0 {
+				if cmp := bytes.Compare(cur.Next[h].Key, key); cmp >= 0 {
 					if cmp == 0 {
 						removed = true
 						cur.Next[h] = cur.Next[h].Next[h]
@@ -118,7 +103,7 @@ func (list *SkipList) Delete(key interface{}) bool {
 }
 
 // Sets value for key in SkipList
-func (list *SkipList) Set(key, value interface{}) {
+func (list *SkipList) Set(key []byte, value []byte) {
 	h := list.highestLevel
 	cur := list.sentinel
 
@@ -126,7 +111,7 @@ func (list *SkipList) Set(key, value interface{}) {
 
 	for ; h >= 0; h-- {
 		for cur != nil {
-			if h >= len(cur.Next) || cur.Next[h] == nil || list.comparator(cur.Next[h].Key, key) >= 0 {
+			if h >= len(cur.Next) || cur.Next[h] == nil || bytes.Compare(cur.Next[h].Key, key) >= 0 {
 				stack = append(stack, cur)
 				break
 			} else {
@@ -135,10 +120,13 @@ func (list *SkipList) Set(key, value interface{}) {
 		}
 	}
 
-	if cur.Next[0] != nil && list.comparator(cur.Next[0].Key, key) == 0 {
+	if cur.Next[0] != nil && bytes.Compare(cur.Next[0].Key, key) == 0 {
+		list.size -= int64(len(cur.Next[0].Value))
 		cur.Next[0].Value = value
+		list.size += int64(len(value))
 	} else {
 		list.count++
+		list.size += int64(len(value) + len(key))
 		newNode := &node{
 			Key:   key,
 			Value: value,
@@ -176,4 +164,8 @@ func (list *SkipList) KeyCount() int64 {
 // Returns an iterator for SkipList
 func (list *SkipList) Iterator() Iterator {
 	return newIterator(list)
+}
+
+func (list *SkipList) RawSize() int64 {
+	return list.size
 }

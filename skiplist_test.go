@@ -40,20 +40,20 @@ func assertNotEq(t *testing.T, expected interface{}, actual interface{}) {
 }
 
 func TestNew(t *testing.T) {
-	l := New(StringComparator)
+	l := New()
 	assertNotEq(t, nil, l)
 }
 
 func TestSet(t *testing.T) {
-	l := New(StringComparator)
-	k := "1"
-	v := "test-val-1"
+	l := New()
+	k := []byte("1")
+	v := []byte("test-val-1")
 	l.Set(k, v)
 	nV := l.Get(k)
 	assertNotEq(t, nil, nV)
 	assertEq(t, v, nV)
 
-	v2 := "test-val-2"
+	v2 := []byte("test-val-2")
 	l.Set(k, v2)
 
 	nV = l.Get(k)
@@ -78,24 +78,13 @@ func TestSet(t *testing.T) {
 	nV = l.Get(k)
 	assertEq(t, nil, nV)
 
-	l = New(IntComparator)
-	for i := 0; i < 100; i++ {
-		l.Set(i*2+1, 1)
-		l.Set(i*2, 0)
-		if i%2 == 0 {
-			assertEq(t, 0, l.Get(i))
-		} else {
-			assertEq(t, 1, l.Get(i))
-		}
-	}
-
 }
 
 func TestGet(t *testing.T) {
-	l := New(IntComparator)
+	l := New()
 	for i := 0; i < 10099; i++ {
-		k := i * 10
-		v := fmt.Sprintf("test-val-%v", i*2)
+		k := []byte(fmt.Sprintf("%v", i*10))
+		v := []byte(fmt.Sprintf("test-val-%v", i*2))
 		l.Set(k, v)
 		nV := l.Get(k)
 		assertNotEq(t, nil, nV)
@@ -103,13 +92,13 @@ func TestGet(t *testing.T) {
 	}
 
 	for i := 0; i < 10099; i++ {
-		k := i * 10
+		k := []byte(fmt.Sprintf("%v", i*10))
 		l.Delete(k)
 	}
 
 	for i := 0; i < 10099; i++ {
-		k := i * 5
-		v := fmt.Sprintf("test-val-%v", i*2)
+		k := []byte(fmt.Sprintf("%v", i*5))
+		v := []byte(fmt.Sprintf("test-val-%v", i*2))
 		l.Set(k, v)
 		nV := l.Get(k)
 		assertNotEq(t, nil, nV)
@@ -119,21 +108,8 @@ func TestGet(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	l := New(Int64Comparator)
 
-	for i := 0; i < 100; i++ {
-		var k int64 = 13
-		l.Set(k, []byte("1"))
-		r := l.Delete(k)
-		assertEq(t, true, r)
-		r = l.Delete(k)
-		assertEq(t, false, r)
-		assertEq(t, nil, l.Get(k))
-		l.Set(k, []byte("1"))
-		assertEq(t, []byte("1"), l.Get(k))
-	}
-
-	l = New(ByteSliceComparator)
+	l := New()
 
 	for i := 0; i < 10000; i++ {
 		k := []byte(fmt.Sprintf("test-key-%v", i))
@@ -167,72 +143,51 @@ func TestDelete(t *testing.T) {
 }
 
 func TestSkipList_KeyCount(t *testing.T) {
-	l := New(IntComparator)
-	l.Set(4, []byte("test"))
-	l.Set(4, []byte("test"))
+	l := New()
+	l.Set([]byte("4"), []byte("test"))
+	l.Set([]byte("4"), []byte("test"))
 	assertEq(t, int64(1), l.KeyCount())
-	l.Delete(4)
+	l.Delete([]byte("4"))
 	assertEq(t, int64(0), l.KeyCount())
-	l.Delete(4)
+	l.Delete([]byte("4"))
 	assertEq(t, int64(0), l.KeyCount())
 	count := 20210
 	for i := 0; i < count; i++ {
-		l.Set(i*10, []byte("test"))
+		k := []byte(fmt.Sprintf("%v", i*10))
+		l.Set(k, []byte("test"))
 	}
 	assertEq(t, int64(count), l.KeyCount())
 }
 
 func BenchmarkSetString(b *testing.B) {
-	l := New(StringComparator)
-	keys := make([]string, b.N)
+	l := New()
+	keys := make([][]byte, b.N)
 	for n := 0; n < b.N; n++ {
-		keys[n] = fmt.Sprintf("%v", n)
+		keys[n] = []byte(fmt.Sprintf("%v", n))
 	}
 	b.ReportAllocs()
 	b.ResetTimer()
+	n1 := []byte("s2")
 	for n := 0; n < b.N; n++ {
-		l.Set(keys[n], 1)
-	}
-}
-
-func BenchmarkSetInt(b *testing.B) {
-	l := New(IntComparator)
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		l.Set(n, n)
+		l.Set(keys[n], n1)
 	}
 }
 
 func BenchmarkGetString(b *testing.B) {
-	l := New(StringComparator)
+	l := New()
 	for i := 0; i < 1000_000; i++ {
 		k := fmt.Sprintf("%v", i)
 		v := fmt.Sprintf("val -> %v", i)
-		l.Set(k, []byte(v))
+		l.Set([]byte(k), []byte(v))
 	}
-	keys := make([]string, b.N)
+	keys := make([][]byte, b.N)
 	for n := 0; n < b.N; n++ {
-		keys[n] = fmt.Sprintf("%v", n)
+		keys[n] = []byte(fmt.Sprintf("%v", n))
 	}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		l.Get(keys[n])
-	}
-}
-
-func BenchmarkGetInt(b *testing.B) {
-	l := New(IntComparator)
-	for i := 0; i < 1000_000; i++ {
-		v := fmt.Sprintf("val -> %v", i)
-		l.Set(i, []byte(v))
-	}
-
-	b.ReportAllocs()
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		l.Get(n)
 	}
 }
 
@@ -261,6 +216,15 @@ func void(_ string) {
 }
 
 func TestSkipList_Iterator(t *testing.T) {
-	l := New(ByteSliceComparator)
+	l := New()
 	assertNotEq(t, nil, l.Iterator())
+}
+
+func TestSkipList_RawSize(t *testing.T) {
+	l := New()
+	assertEq(t, int64(0), l.RawSize())
+	k := []byte("test")
+	v := []byte("abc")
+	l.Set(k, v)
+	assertEq(t, int64(len(k)+len(v)), l.RawSize())
 }
