@@ -42,7 +42,7 @@ func TestIteratorImpl_Key(t *testing.T) {
 	it.Next()
 	assertEq(t, it.Key(), []byte("baaa"))
 	it.Next()
-	assertEq(t, it.Key(), nil)
+	assertEq(t, nil, it.Key())
 }
 
 func TestIteratorImpl_Value(t *testing.T) {
@@ -59,6 +59,6 @@ func TestIteratorImpl_Value(t *testing.T) {
 	it.Next()
 	assertEq(t, it.Value(), []byte("test_b2"))
 	it.Next()
-	assertEq(t, it.Value(), nil)
+	assertEq(t, nil, it.Value())
 
 }

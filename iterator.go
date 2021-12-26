@@ -11,8 +11,8 @@ package skiplist
 //
 type Iterator interface {
 	Next() bool
-	Key() interface{}
-	Value() interface{}
+	Key() []byte
+	Value() []byte
 }
 
 type iteratorImpl struct {
@@ -39,7 +39,7 @@ func (i *iteratorImpl) Next() bool {
 }
 
 // returns the key on the node
-func (i *iteratorImpl) Key() interface{} {
+func (i *iteratorImpl) Key() []byte {
 	if i.cur != nil {
 		return i.cur.Key
 	}
@@ -47,7 +47,7 @@ func (i *iteratorImpl) Key() interface{} {
 }
 
 // returns the value on the node
-func (i *iteratorImpl) Value() interface{} {
+func (i *iteratorImpl) Value() []byte {
 	if i.cur != nil {
 		return i.cur.Value
 	}
